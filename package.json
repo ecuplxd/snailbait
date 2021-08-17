@@ -1,0 +1,23 @@
+{
+  "name": "snailbait",
+  "version": "1.0.0",
+  "description": "snailbait game ts version",
+  "dependencies": {},
+  "devDependencies": {
+    "css-loader": "^1.0.1",
+    "ts-loader": "^4.5.0",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-serve": "^2.0.3"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --mode development --port 5000 --output-public-path dist",
+    "build": "webpack --mode production --progress --colors",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack -w"
+  },
+  "author": "12050901053@ecupl.edu.cn",
+  "license": "GPL"
+}

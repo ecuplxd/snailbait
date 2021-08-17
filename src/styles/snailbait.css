@@ -1,0 +1,30 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  /* background-color: #6d6aff; */
+}
+
+.snailbait-game-container {
+  margin-top: 60px;
+}
+
+.snailbait-game-container canvas {
+  border: 1px solid;
+}
+
+#fps-info {
+  text-align: right;
+  margin-bottom: 4px;
+}
