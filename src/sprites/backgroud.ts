@@ -1,4 +1,5 @@
 import {
+  BACKGROUND_VELOCITY,
   STARTING_BACKGROUND_OFFSET,
   STARTING_BACKGROUND_VELOCITY,
 } from 'config';
@@ -45,5 +46,13 @@ export class BackgroundSprite {
     context.drawImage(this.image, this.image.width, 0);
 
     context.translate(this.offset, 0);
+  }
+
+  turnLeft() {
+    this.velocity = -BACKGROUND_VELOCITY;
+  }
+
+  turnRight() {
+    this.velocity = BACKGROUND_VELOCITY;
   }
 }

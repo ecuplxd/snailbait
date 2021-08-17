@@ -14,3 +14,5 @@ export function calCurrentFrameNeedToMovePixel(
 ): number {
   return velocity * ((now - lastAnimationFrameTime) / 1000);
 }
+
+export function skipFn() {}

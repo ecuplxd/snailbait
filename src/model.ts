@@ -10,3 +10,9 @@ export interface PlatformData {
   pulsate?: boolean;
   snail?: boolean;
 }
+
+export interface KeyBinding {
+  name: string;
+  keys: string | string[];
+  command: () => void;
+}

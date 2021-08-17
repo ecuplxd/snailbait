@@ -2,7 +2,9 @@
   "name": "snailbait",
   "version": "1.0.0",
   "description": "snailbait game ts version",
-  "dependencies": {},
+  "dependencies": {
+    "rxjs": "~6.6.0"
+  },
   "devDependencies": {
     "css-loader": "^1.0.1",
     "ts-loader": "^4.5.0",

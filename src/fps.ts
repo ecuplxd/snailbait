@@ -30,6 +30,10 @@ class Fps {
     this.lastAnimationFrameTime = now;
   }
 
+  increaseUpdate(delta: TimeStamp) {
+    this.lastAnimationFrameTime += delta;
+  }
+
   format(fps: number): number {
     return parseInt(fps.toFixed(0), 10);
   }

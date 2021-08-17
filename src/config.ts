@@ -1,6 +1,8 @@
 export const LEFT = 1;
 export const RIGHT = 2;
 
+export const PAUSED_CHECK_INTERVAL = 200;
+
 // track
 export const TRACK_BASELINES: {
   [key: number]: number;
@@ -11,9 +13,11 @@ export const TRACK_BASELINES: {
 };
 
 // background
-export const STARTING_BACKGROUND_VELOCITY = 25;
+export const STARTING_BACKGROUND_VELOCITY = 0;
 
 export const STARTING_BACKGROUND_OFFSET = 0;
+
+export const BACKGROUND_VELOCITY = 25;
 
 // platform
 export const PLATFORM_HEIGHT = 8;

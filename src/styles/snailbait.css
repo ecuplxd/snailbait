@@ -24,7 +24,20 @@ body {
   border: 1px solid;
 }
 
-#fps-info {
+#snailbait-fps-info {
   text-align: right;
   margin-bottom: 4px;
+}
+
+#snailbait-toast {
+  position: absolute;
+  margin-left: 100px;
+  margin-top: 20px;
+  width: 600px;
+  font: 128px fantasy;
+  text-align: center;
+  color: #ff6;
+  text-shadow: 2px 2px 4px rgb(0, 0, 0);
+  display: none;
+  z-index: 1;
 }
