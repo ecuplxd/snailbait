@@ -1,7 +1,16 @@
-import { PLATFORM_HEIGHT } from 'config';
-import { PlatformData } from 'model';
+import { PlatformData } from './model';
 
-export const platformData: PlatformData[] = [
+export const PLATFORM_HEIGHT = 8;
+
+export const PLATFORM_VELOCITY_MULTIPLIER = 4.35;
+
+export const PLATFORM_STROKE_WIDTH = 2;
+
+export const PLATFORM_STROKE_STYLE = 'rgb(0,0,0)';
+
+export const STARTING_PLATFORM_OFFSET = 0;
+
+export const PLATFORM_DATA: PlatformData[] = [
   // Screen 1
   {
     left: 10,

@@ -1,0 +1,23 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "member-ordering": [
+      true,
+      {
+        "alphabetize": true,
+        "order": [
+          "static-field",
+          "instance-field",
+          "constructor",
+          "static-method",
+          "instance-method"
+        ]
+      }
+    ],
+    "no-empty": [true, "allow-empty-functions"],
+    "no-unused-expression": true,
+    "no-console": false,
+    "variable-name": [true, "allow-pascal-case", "allow-trailing-underscore"],
+    "max-classes-per-file": false
+  }
+}
