@@ -1,3 +1,4 @@
+import { fakeIn, fakeOut } from 'animation';
 import { PAUSED_CHECK_INTERVAL } from 'config';
 import { fps } from 'fps';
 import { KeyBinding, TimeStamp } from 'model';
@@ -12,6 +13,10 @@ export class Snailbait {
   fpsEl!: HTMLDivElement;
 
   toastEl!: HTMLDivElement;
+
+  scoreEl!: HTMLDivElement;
+
+  loadingEl!: HTMLDivElement;
 
   context!: CanvasRenderingContext2D;
 
@@ -31,6 +36,8 @@ export class Snailbait {
 
   countdown_!: Subscription;
 
+  score = 0;
+
   keyBindings: KeyBinding[] = [
     {
       name: '向右移动',
@@ -49,24 +56,27 @@ export class Snailbait {
     },
     {
       name: '跳跃',
-      keys: 'j',
+      keys: ['j', 'f', ' '],
       command: () => this.jump(),
     },
   ];
 
   constructor() {
-    const canvas = document.getElementById(
-      'snailbait-game-canvas'
-    ) as HTMLCanvasElement;
+    const canvas = this.getGameElement<HTMLCanvasElement>('game-canvas');
 
-    this.toastEl = document.getElementById('snailbait-toast') as HTMLDivElement;
-    this.fpsEl = document.getElementById(
-      'snailbait-fps-info'
-    ) as HTMLDivElement;
+    this.toastEl = this.getGameElement('toast');
+    this.fpsEl = this.getGameElement('fps');
+    this.scoreEl = this.getGameElement('score');
+    this.loadingEl = this.getGameElement('loading');
 
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D;
     this.run = this.run.bind(this);
+    this.updateScore(0);
     this.listenKeyboard();
+  }
+
+  getGameElement<T extends HTMLElement = HTMLDivElement>(id: string): T {
+    return document.getElementById('snailbait-' + id) as T;
   }
 
   draw() {
@@ -150,7 +160,7 @@ export class Snailbait {
           take(4)
         )
         .subscribe(
-          (num) => this.revealToast('' + num),
+          (num) => num && this.revealToast('' + num),
           skipFn,
           () => {
             this.hideToast();
@@ -161,12 +171,13 @@ export class Snailbait {
   }
 
   hideToast() {
-    this.toastEl.style.display = 'none';
+    fakeOut(this.toastEl, 450);
   }
 
   revealToast(text: string) {
-    this.toastEl.style.display = 'block';
     this.toastEl.innerText = text;
+    fakeIn(this.toastEl);
+    setTimeout(() => this.hideToast(), 500);
   }
 
   listenKeyboard() {
@@ -184,5 +195,10 @@ export class Snailbait {
     window.addEventListener('blur', () => this.leaveGame());
 
     window.addEventListener('focus', () => this.reEnterGame());
+  }
+
+  updateScore(score: number) {
+    this.score = score;
+    this.scoreEl.innerText = '' + score;
   }
 }

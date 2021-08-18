@@ -13,10 +13,42 @@ body {
 body {
   display: flex;
   justify-content: center;
-  /* background-color: #6d6aff; */
+  background-color: #6d6aff;
+  background-image: repeating-linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px,
+      transparent 60px
+    ),
+    repeating-linear-gradient(
+      60deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px,
+      transparent 60px
+    ),
+    linear-gradient(
+      60deg,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.1) 75%,
+      rgba(0, 0, 0, 0.1)
+    ),
+    linear-gradient(
+      120deg,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.1) 75%,
+      rgba(0, 0, 0, 0.1)
+    );
+  background-size: 70px 120px;
 }
 
 .snailbait-game-container {
+  position: relative;
   margin-top: 60px;
 }
 
@@ -24,12 +56,22 @@ body {
   border: 1px solid;
 }
 
-#snailbait-fps-info {
-  text-align: right;
+#snailbait-game-info {
+  position: relative;
   margin-bottom: 4px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#snailbait-fps {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 #snailbait-toast {
+  display: none;
   position: absolute;
   margin-left: 100px;
   margin-top: 20px;
@@ -38,6 +80,48 @@ body {
   text-align: center;
   color: #ff6;
   text-shadow: 2px 2px 4px rgb(0, 0, 0);
-  display: none;
+  transition: opacity 0.5s;
+  opacity: 0;
   z-index: 1;
+}
+
+#snailbait-score {
+  text-align: center;
+}
+
+#snailbait-config {
+  margin-top: 4px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#snailbait-config .config-item {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 16px;
+  padding: 2px 10px;
+  border: 1px solid;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #fff;
+}
+
+#snailbait-config .config-item > div {
+  margin-right: 16px;
+}
+
+#snailbait-config .config-item > div:last-child {
+  margin-right: 0;
+}
+
+#snailbait-config .config-item > div input {
+  margin: 0;
+}
+
+#snailbait-config .config-item:last-child {
+  margin-right: 0;
+}
+
+#snailbait-config .config-item .description {
+  color: blue;
 }

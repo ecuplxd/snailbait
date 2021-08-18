@@ -10,13 +10,55 @@
 </head>
 
 <body>
-
   <div class="snailbait-game-container">
-    <div id="snailbait-fps-info">60 FPS</div>
+    <!-- 加载指示器 -->
+    <div id="snailbait-loading"></div>
 
+    <!-- 记分牌/FPS -->
+    <div id="snailbait-game-info">
+      <div id="snailbait-score">0</div>
+
+      <div id="snailbait-fps">60 FPS</div>
+    </div>
+
+    <!-- 消息提示 -->
     <div id='snailbait-toast'></div>
 
+    <!-- 游戏画布 -->
     <canvas id="snailbait-game-canvas" width="800" height="400"></canvas>
+
+    <!-- 游戏设置 -->
+    <div id="snailbait-config">
+      <div class="config-item">
+        <div>
+          <label for="sound">声音：</label>
+          <input type="checkbox" name="sound" id="sound">
+        </div>
+
+        <div>
+          <label for="music">音乐：</label>
+          <input type="checkbox" name="music" id="music">
+        </div>
+      </div>
+
+      <div class="config-item">
+        <div>
+          <span>←/d：<span class="description">向左移动</span></span>
+        </div>
+
+        <div>
+          <span>→/k：<span class="description">向右移动</span></span>
+        </div>
+      </div>
+
+      <div class="config-item">
+        <span>j/f/空格键：<span class="description">跳跃</span></span>
+      </div>
+
+      <div class="config-item">
+        <span>p：<span class="description">暂停</span></span>
+      </div>
+    </div>
   </div>
 
   <script src="./dist/snailbait.js"></script>
