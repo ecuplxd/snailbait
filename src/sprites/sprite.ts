@@ -1,9 +1,13 @@
 import { Fps } from 'fps';
-import { Behavior } from './behavior';
+import { Behavior } from '../behavior/behavior';
+import { BombSprite } from './bomb/sprite';
 import { CollisionMargin } from './collisionMargin';
-import { STARTING_SPRITE_OFFSET, STARTING_SPRITE_VELOCITY } from './data';
+import {
+  CANVAS_WIDTH,
+  STARTING_SPRITE_OFFSET,
+  STARTING_SPRITE_VELOCITY,
+} from './data';
 import { Artist, SpriteData } from './model';
-import { PLATFORM_VELOCITY_MULTIPLIER } from './platform/data';
 
 export class Sprite<T extends Artist = Artist> {
   static DEFAULT_HEIGHT = 10;
@@ -11,6 +15,8 @@ export class Sprite<T extends Artist = Artist> {
   static DEFAULT_OPACITY = 1.0;
 
   static DEFAULT_WIDTH = 10;
+
+  arms: BombSprite[] = [];
 
   collisionMargin = new CollisionMargin();
 
@@ -40,6 +46,12 @@ export class Sprite<T extends Artist = Artist> {
     public behavior?: Behavior
   ) {}
 
+  arm(arm: BombSprite) {
+    arm.initArm(this);
+
+    this.arms.push(arm);
+  }
+
   draw(context: CanvasRenderingContext2D) {
     context.save();
 
@@ -52,7 +64,7 @@ export class Sprite<T extends Artist = Artist> {
     context.restore();
   }
 
-  inView(canvasWidth: number): boolean {
+  inView(canvasWidth = CANVAS_WIDTH): boolean {
     if (!this.visible) {
       return false;
     }
@@ -63,12 +75,8 @@ export class Sprite<T extends Artist = Artist> {
     );
   }
 
-  move(fps: Fps, relativeVelocity: number) {
-    let velocity = relativeVelocity * PLATFORM_VELOCITY_MULTIPLIER;
-
-    velocity = this.updateVelocityX(velocity);
-
-    this.hOffset += fps.calCurrentFrameNeedToMovePixel(velocity);
+  move(fps: Fps, velocity: number) {
+    this.hOffset += fps.calCurrentFramePixelsToMove(velocity);
   }
 
   resetOffset() {

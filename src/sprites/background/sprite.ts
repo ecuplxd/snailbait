@@ -21,7 +21,7 @@ export class BackgroundSprite extends Sprite {
   }
 
   move(fps: Fps) {
-    this.hOffset += fps.calCurrentFrameNeedToMovePixel(this.velocityX);
+    this.hOffset += fps.calCurrentFramePixelsToMove(this.velocityX);
 
     if (this.isInvalidOffset()) {
       this.resetOffset();

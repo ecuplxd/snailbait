@@ -3,6 +3,10 @@ import { Cell, SpriteData } from 'sprites/model';
 
 export const BAT_CELLS_HEIGHT = 34;
 
+export const BAT_FLAP_DURATION = 100;
+
+export const BAT_FLAP_INTERVAL = 30;
+
 export const BAT_CELLS: Cell[] = [
   new Cell(3, 0, 36, BAT_CELLS_HEIGHT),
   new Cell(41, 0, 46, BAT_CELLS_HEIGHT),

@@ -5,6 +5,10 @@ export const COIN_CELLS_WIDTH = 30;
 
 export const COIN_CELLS_HEIGHT = 30;
 
+export const GOLD_THROB_DURATION = 500;
+
+export const BLUE_THROB_DURATION = 500;
+
 export const BLUE_COIN_CELLS: Cell[] = [
   new Cell(5, 540, COIN_CELLS_WIDTH, COIN_CELLS_HEIGHT),
   new Cell(5 + COIN_CELLS_WIDTH, 540, COIN_CELLS_WIDTH, COIN_CELLS_HEIGHT),

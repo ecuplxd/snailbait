@@ -14,6 +14,7 @@ import { ButtonSprite } from 'sprites/button/sprite';
 import { COIN_SPRITES } from 'sprites/coin';
 import { ConinSprite } from 'sprites/coin/sprite';
 import { PLATFORM_SPRITES } from 'sprites/platform';
+import { PLATFORM_VELOCITY_MULTIPLIER } from 'sprites/platform/data';
 import { PlatformSprite } from 'sprites/platform/sprite';
 import { RUBY_SPRITES } from 'sprites/ruby';
 import { RubySprite } from 'sprites/ruby/sprite';
@@ -100,6 +101,7 @@ export class Snailbait {
     ...this.rubySprites,
     ...this.sapphireSprites,
     ...this.snailSprites,
+    ...this.snailSprites.map((snail) => snail.arms[0]),
     this.runnerSprite,
   ];
 
@@ -130,7 +132,7 @@ export class Snailbait {
 
   drawSprites() {
     this.sprites
-      .filter((sprite) => sprite.inView(this.canvas.width))
+      .filter((sprite) => sprite.inView())
       .forEach((sprite) => {
         this.context.translate(-sprite.hOffset, 0);
         sprite.draw(this.context);
@@ -182,12 +184,13 @@ export class Snailbait {
   }
 
   moveSprites() {
+    const platformVelocity =
+      this.backgroundSprite.velocityX * PLATFORM_VELOCITY_MULTIPLIER;
+
     this.backgroundSprite.move(this.fps);
     this.sprites
       .filter((sprite) => sprite.type !== 'runner')
-      .forEach((sprite) =>
-        sprite.move(this.fps, this.backgroundSprite.velocityX)
-      );
+      .forEach((sprite) => sprite.move(this.fps, platformVelocity));
   }
 
   reEnterGame() {
@@ -268,7 +271,7 @@ export class Snailbait {
 
   updateSprites() {
     this.sprites
-      .filter((sprite) => sprite.inView(this.canvas.width))
+      .filter((sprite) => sprite.inView())
       .forEach((sprite) => sprite.update(this.context, this.fps));
   }
 }

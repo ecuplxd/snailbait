@@ -1,11 +1,12 @@
+import { Behavior } from 'behavior/behavior';
 import { Fps } from 'fps';
-import { Behavior } from 'sprites/behavior';
+import { TimeStamp } from 'model';
 import { RunnerSprite } from './sprite';
 
 export class RunnerBehavior extends Behavior<RunnerSprite> {
   actions = [this.run, this.jump, this.collide, this.explode];
 
-  lastAdvanceTime = 0;
+  lastAdvanceTime: TimeStamp = 0;
 
   collide(sprite: RunnerSprite, fps: Fps, context: CanvasRenderingContext2D) {}
 
@@ -20,12 +21,13 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
       return;
     }
 
-    if (this.lastAdvanceTime === 0) {
-      this.lastAdvanceTime = fps.currentTime;
-    } else if (fps.oneFramePassed(this.lastAdvanceTime, sprite.animationRate)) {
-      sprite.artist.advance();
-
-      this.lastAdvanceTime = fps.currentTime;
+    if (this.skipFirst()) {
+      this.updateLastAdvanceTime(fps);
+    } else if (
+      // 1000 / animationRate 一帧持续的时间
+      fps.oneFramePassed(this.lastAdvanceTime, 1000 / sprite.animationRate)
+    ) {
+      this.advanceArtist(sprite, fps);
     }
   }
 }

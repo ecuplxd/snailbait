@@ -1,6 +1,6 @@
 import { LEFT, RIGHT } from 'config';
 import { SpriteArtist } from 'sprites/artist';
-import { Behavior } from 'sprites/behavior';
+import { Behavior } from 'behavior/behavior';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
 import { calculatePlatformTop } from 'utils';

@@ -1,16 +1,28 @@
+import { PaceBehavior } from 'behavior/pace';
+import { SpriteArtist } from 'sprites/artist';
+import { Cell } from 'sprites/model';
 import { PlatformSprite } from 'sprites/platform/sprite';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
-import { SpriteArtist } from 'sprites/artist';
-import { BUTTON_CELLS_HEIGHT, BUTTON_CELLS_WIDTH } from './data';
-import { Cell } from 'sprites/model';
+import {
+  BUTTON_CELLS_HEIGHT,
+  BUTTON_CELLS_WIDTH,
+  BUTTON_PACE_VELOCITY,
+} from './data';
 
-export class ButtonSprite extends Sprite {
+export class ButtonSprite extends Sprite<SpriteArtist> {
+  direction!: number;
+
   constructor(public platformSprite: PlatformSprite, buttonCells: Cell[]) {
-    super('button', new SpriteArtist(SpriteSheetResource, buttonCells));
+    super(
+      'button',
+      new SpriteArtist(SpriteSheetResource, buttonCells),
+      new PaceBehavior()
+    );
 
     this.width = BUTTON_CELLS_WIDTH;
     this.height = BUTTON_CELLS_HEIGHT;
+    this.velocityX = BUTTON_PACE_VELOCITY;
 
     this.putOnPlatform();
   }

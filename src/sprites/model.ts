@@ -1,5 +1,8 @@
-import { Fps } from 'fps';
+import { ButtonSprite } from './button/sprite';
+import { SnailSprite } from './snail/sprite';
 import { Sprite } from './sprite';
+
+export type SpriteWithPlatform = ButtonSprite | SnailSprite;
 
 export class Cell {
   constructor(
@@ -15,15 +18,11 @@ export class SpriteData {
 }
 
 export abstract class Artist {
+  cellIndex!: number;
+
   cells: Cell[] = [];
 
   advance() {}
 
   abstract draw(sprite: Sprite, context: CanvasRenderingContext2D): void;
 }
-
-export type BehaviorAction<T extends Sprite = Sprite> = (
-  sprite: T,
-  fps: Fps,
-  context: CanvasRenderingContext2D
-) => void;

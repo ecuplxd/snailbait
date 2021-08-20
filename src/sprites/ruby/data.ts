@@ -6,6 +6,10 @@ export const RUBY_CELLS_WIDTH = 35;
 
 export const RUBY_CELLS_HEIGHT = 30;
 
+export const RUBY_SPARKLE_DURATION = 100;
+
+export const RUBY_SPARKLE_INTERVAL = 500;
+
 export const RUBY_CELLS: Cell[] = [
   new Cell(3, 138, RUBY_CELLS_WIDTH, RUNNER_HEIGHT),
   new Cell(39, 138, RUBY_CELLS_WIDTH, RUNNER_HEIGHT),

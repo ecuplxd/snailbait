@@ -35,7 +35,7 @@ export class Fps {
 
   // 求当前时间帧需要移动的像素点
   // 秒/帧 * 像素/秒 = 像素/帧
-  calCurrentFrameNeedToMovePixel(velocity: number) {
+  calCurrentFramePixelsToMove(velocity: number) {
     return velocity * ((this.currentTime - this.lastAnimationFrameTime) / 1000);
   }
 
@@ -47,9 +47,8 @@ export class Fps {
     this.lastAnimationFrameTime += delta;
   }
 
-  // 1000 / animationRate 一帧持续的时间
   oneFramePassed(lastTime: TimeStamp, animationRate: number): boolean {
-    return this.currentTime - lastTime > 1000 / animationRate;
+    return this.currentTime - lastTime > animationRate;
   }
 
   update(now: TimeStamp) {

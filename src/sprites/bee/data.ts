@@ -7,6 +7,10 @@ export const BAT_CELLS_HEIGHT = 34;
 
 export const BEE_CELLS_HEIGHT = 50;
 
+export const BEE_FLAP_DURATION = 100;
+
+export const BEE_FLAP_INTERVAL = 30;
+
 export const BEE_CELLS: Cell[] = [
   new Cell(5, 234, BEE_CELLS_WIDTH, BEE_CELLS_HEIGHT),
   new Cell(75, 234, BEE_CELLS_WIDTH, BEE_CELLS_HEIGHT),
