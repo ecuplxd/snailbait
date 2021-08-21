@@ -1,4 +1,5 @@
 import { Fps } from 'fps';
+import { StopWatchPair } from 'model';
 import { Behavior } from '../behavior/behavior';
 import { BombSprite } from './bomb/sprite';
 import { CollisionMargin } from './collisionMargin';
@@ -29,6 +30,8 @@ export class Sprite<T extends Artist = Artist> {
   opacity = Sprite.DEFAULT_OPACITY;
 
   showCollisionRectangle = false;
+
+  timers: StopWatchPair[] = [];
 
   top = 0;
 
@@ -79,6 +82,18 @@ export class Sprite<T extends Artist = Artist> {
     this.hOffset += fps.calCurrentFramePixelsToMove(velocity);
   }
 
+  pause() {
+    this.timers.forEach((timer) => {
+      const [first, second] = timer;
+
+      if (first.isRunning()) {
+        first.pause();
+      } else if (second.isRunning()) {
+        second.pause();
+      }
+    });
+  }
+
   resetOffset() {
     this.hOffset = 0;
   }
@@ -86,6 +101,18 @@ export class Sprite<T extends Artist = Artist> {
   setPosition(data: SpriteData) {
     this.top = data.top;
     this.left = data.left;
+  }
+
+  unpause() {
+    this.timers.forEach((timer) => {
+      const [first, second] = timer;
+
+      if (first.isRunning()) {
+        first.unpause();
+      } else if (second.isRunning()) {
+        second.unpause();
+      }
+    });
   }
 
   update(context: CanvasRenderingContext2D, fps: Fps) {

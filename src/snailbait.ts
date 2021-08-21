@@ -66,7 +66,7 @@ export class Snailbait {
     {
       name: '跳跃',
       keys: ['j', 'f', ' '],
-      command: () => this.jump(),
+      command: () => this.runnerSprite.jump(),
     },
   ];
 
@@ -154,8 +154,6 @@ export class Snailbait {
     fakeOut(this.toastEl, 450);
   }
 
-  jump() {}
-
   leaveGame() {
     if (this.countdown_) {
       this.countdown_.unsubscribe();
@@ -242,12 +240,24 @@ export class Snailbait {
 
     this.paused = !this.paused;
 
+    this.togglePausedStateOfAllBehaviors();
+
     if (this.paused) {
       this.pauseStartTime = now;
     } else {
       this.fps.increaseUpdate(now - this.pauseStartTime);
       // this.startGame();
     }
+  }
+
+  togglePausedStateOfAllBehaviors() {
+    this.sprites.forEach((sprite) => {
+      if (this.paused) {
+        sprite.pause();
+      } else {
+        sprite.unpause();
+      }
+    });
   }
 
   turnLeft() {

@@ -8,6 +8,10 @@ export const RUN_ANIMATION_RATE = 30;
 
 export const RUNNER_LEFT = 50;
 
+export const JUMP_HEIGHT = 120;
+
+export const JUMP_DURATION = 1000;
+
 export const STARTING_RUNNER_TRACK = 1;
 
 export const RUNNER_CELLS_RIGHT: Cell[] = [

@@ -19,4 +19,4 @@ export const SNAIL_CELLS: Cell[] = [
   new Cell(2, 466, SNAIL_CELLS_WIDTH, SNAIL_CELLS_HEIGHT),
 ];
 
-export const SNAIL_DATA: PlatformInfo[] = [new PlatformInfo(1)];
+export const SNAIL_DATA: PlatformInfo[] = [new PlatformInfo(3)];
