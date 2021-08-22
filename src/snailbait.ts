@@ -219,10 +219,10 @@ export class Snailbait {
     if (this.paused) {
       // TODO
       // ？？ 这里为啥要检测是否恢复啊很奇怪……明明能知道确切的游戏暂停/启动时间点
-      setTimeout(
-        () => requestAnimationFrame(this.run),
-        this.pausedCheckInterval
-      );
+      // setTimeout(
+      //   () => requestAnimationFrame(this.run),
+      //   this.pausedCheckInterval
+      // );
     } else {
       this.fps.calc(now, (value) => this.updateFps(value));
       this.draw();
@@ -246,16 +246,16 @@ export class Snailbait {
       this.pauseStartTime = now;
     } else {
       this.fps.increaseUpdate(now - this.pauseStartTime);
-      // this.startGame();
+      this.startGame();
     }
   }
 
   togglePausedStateOfAllBehaviors() {
     this.sprites.forEach((sprite) => {
       if (this.paused) {
-        sprite.pause();
+        sprite.behavior?.pause();
       } else {
-        sprite.unpause();
+        sprite.behavior?.unpause();
       }
     });
   }

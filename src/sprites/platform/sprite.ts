@@ -1,3 +1,4 @@
+import { PulseBehavior } from 'behavior/pulse';
 import { Sprite } from 'sprites/sprite';
 import { calculatePlatformTop } from 'utils';
 import { PlatformArtist } from './artist';
@@ -18,7 +19,7 @@ export class PlatformSprite extends Sprite<PlatformArtist> {
   track = 1;
 
   constructor(data: PlatformData) {
-    super('platform', new PlatformArtist());
+    super('platform', new PlatformArtist(), new PulseBehavior());
 
     this.left = data.left;
     this.width = data.width;

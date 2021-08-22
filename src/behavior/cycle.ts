@@ -3,9 +3,16 @@ import { Sprite } from 'sprites/sprite';
 import { Behavior } from './behavior';
 
 export class CycleBehavior extends Behavior {
+  static DURATION = 1000;
+
+  static INTERVAL = 500;
+
   actions = [this.cycle];
 
-  constructor(public duration: number = 1000, public interval: number = 500) {
+  constructor(
+    public duration: number = CycleBehavior.DURATION,
+    public interval: number = CycleBehavior.INTERVAL
+  ) {
     super();
   }
 

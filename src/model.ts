@@ -1,8 +1,8 @@
-import { StopWatch } from 'stopWatch';
+import { Timer } from 'timer/timer';
 
 export type TimeStamp = number;
 
-export type StopWatchPair = StopWatch[];
+export type TimerPair = Timer[];
 
 export interface KeyBinding {
   command: () => void;

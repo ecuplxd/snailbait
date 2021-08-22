@@ -3,7 +3,6 @@ import { LEFT, RIGHT } from 'config';
 import { SpriteArtist } from 'sprites/artist';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
-import { StopWatch } from 'stopWatch';
 import { calculatePlatformTop } from 'utils';
 import { RunnerBehavior } from './behavior';
 import {
@@ -20,12 +19,6 @@ import {
 export class RunnerSprite extends Sprite<SpriteArtist> {
   animationRate = RUN_ANIMATION_RATE;
 
-  // 上升秒表
-  ascendTimer = new StopWatch();
-
-  // 下降秒表
-  descendTimer = new StopWatch();
-
   direction = LEFT;
 
   // 能跳到的最高高度，到达后将下降
@@ -37,8 +30,6 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
   jumpHeight = JUMP_HEIGHT;
 
   jumping = false;
-
-  timers = [[this.ascendTimer, this.descendTimer]];
 
   track = STARTING_RUNNER_TRACK;
 
@@ -68,11 +59,12 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
     this.jumping = true;
     this.animationRate = 0;
     this.verticalLaunchPosition = this.top;
-    this.ascendTimer.start();
+    (this.behavior as unknown as RunnerBehavior).ascendTimer.start();
   }
 
   stopJumping() {
     this.jumping = false;
+    (this.behavior as unknown as RunnerBehavior).descendTimer.stop();
   }
 
   turnLeft() {

@@ -1,14 +1,12 @@
-import { CycleBehavior } from 'behavior/cycle';
 import { SpriteArtist } from 'sprites/artist';
 import { SpriteData } from 'sprites/model';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
+import { SapphireBehavior } from './behavior';
 import {
   SAPPHIRE_CELLS,
   SAPPHIRE_CELLS_HEIGHT,
   SAPPHIRE_CELLS_WIDTH,
-  SAPPHIRE_SPARKLE_DURATION,
-  SAPPHIRE_SPARKLE_INTERVAL,
 } from './data';
 
 export class SapphireSprite extends Sprite {
@@ -18,7 +16,7 @@ export class SapphireSprite extends Sprite {
     super(
       'sapphire',
       new SpriteArtist(SpriteSheetResource, SAPPHIRE_CELLS),
-      new CycleBehavior(SAPPHIRE_SPARKLE_DURATION, SAPPHIRE_SPARKLE_INTERVAL)
+      new SapphireBehavior()
     );
 
     this.width = SAPPHIRE_CELLS_WIDTH;

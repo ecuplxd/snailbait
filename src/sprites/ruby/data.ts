@@ -10,6 +10,10 @@ export const RUBY_SPARKLE_DURATION = 100;
 
 export const RUBY_SPARKLE_INTERVAL = 500;
 
+export const RUBY_BOUNCE_DURATION_BASE = 1000;
+
+export const RUBY_BOUNCE_HEIGHT_BASE = 100;
+
 export const RUBY_CELLS: Cell[] = [
   new Cell(3, 138, RUBY_CELLS_WIDTH, RUNNER_HEIGHT),
   new Cell(39, 138, RUBY_CELLS_WIDTH, RUNNER_HEIGHT),

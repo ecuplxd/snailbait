@@ -1,6 +1,6 @@
 import { TimeStamp } from 'model';
 
-export class StopWatch {
+export class Timer {
   elapsed!: number; // 经过的时间
 
   paused = false; // 是否被暂停
@@ -13,8 +13,8 @@ export class StopWatch {
 
   totalPausedTime = 0; // 被暂停的总时间
 
-  getElapsedTime() {
-    const now = +new Date();
+  getElapsedTime(now?: TimeStamp) {
+    now = now || +new Date();
 
     if (this.running) {
       return now - this.startTime - this.totalPausedTime;
@@ -32,53 +32,51 @@ export class StopWatch {
   }
 
   // 暂停
-  pause() {
-    const now = +new Date();
+  pause(now?: TimeStamp) {
+    if (this.paused) {
+      return;
+    }
 
-    this.startPause = now;
+    this.startPause = now || +new Date();
     this.paused = true;
   }
 
   // 重置
-  reset() {
-    const now = +new Date();
-
+  reset(now?: TimeStamp) {
     this.elapsed = 0;
-    this.startTime = now;
+    this.startTime = now || +new Date();
     this.running = false;
     this.totalPausedTime = 0;
     this.startPause = 0;
   }
 
   // 开始
-  start() {
-    const now = +new Date();
-
-    this.startTime = now;
+  start(now?: TimeStamp) {
+    this.startTime = now || +new Date();
     this.running = true;
     this.totalPausedTime = 0;
     this.startPause = 0;
   }
 
   // 停止
-  stop() {
-    const now = +new Date();
-
+  stop(now?: TimeStamp) {
     if (this.paused) {
       this.unpause();
     }
+
+    now = now || +new Date();
 
     this.elapsed = now - this.startTime - this.totalPausedTime;
     this.running = false;
   }
 
   // 取消暂停
-  unpause() {
-    const now = +new Date();
-
+  unpause(now?: TimeStamp) {
     if (!this.paused) {
       return;
     }
+
+    now = now || +new Date();
 
     this.totalPausedTime += now - this.startPause;
     this.startPause = 0;

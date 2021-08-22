@@ -36,8 +36,10 @@ export class Fps {
   // 求当前时间帧需要移动的像素点
   // 本质还是 速度 * 时间 = 路程
   // 像素/秒（速度） * 秒/帧（时间） = 像素/帧（路程）
-  calCurrentFramePixelsToMove(velocity: number) {
-    return velocity * ((this.currentTime - this.lastAnimationFrameTime) / 1000);
+  calCurrentFramePixelsToMove(velocity: number, duration = 1000) {
+    return (
+      velocity * ((this.currentTime - this.lastAnimationFrameTime) / duration)
+    );
   }
 
   format(value: number): number {

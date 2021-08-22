@@ -1,15 +1,9 @@
-import { CycleBehavior } from 'behavior/cycle';
 import { SpriteArtist } from 'sprites/artist';
 import { SpriteData } from 'sprites/model';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
-import {
-  RUBY_CELLS,
-  RUBY_CELLS_HEIGHT,
-  RUBY_CELLS_WIDTH,
-  RUBY_SPARKLE_DURATION,
-  RUBY_SPARKLE_INTERVAL,
-} from './data';
+import { RubyBehavior } from './behavior';
+import { RUBY_CELLS, RUBY_CELLS_HEIGHT, RUBY_CELLS_WIDTH } from './data';
 
 export class RubySprite extends Sprite {
   value = 200;
@@ -18,7 +12,7 @@ export class RubySprite extends Sprite {
     super(
       'ruby',
       new SpriteArtist(SpriteSheetResource, RUBY_CELLS),
-      new CycleBehavior(RUBY_SPARKLE_DURATION, RUBY_SPARKLE_INTERVAL)
+      new RubyBehavior()
     );
 
     this.width = RUBY_CELLS_WIDTH;

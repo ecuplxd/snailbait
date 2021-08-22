@@ -1,14 +1,14 @@
+import { SpriteArtist } from 'sprites/artist';
 import { Cell, SpriteData } from 'sprites/model';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
-import { SpriteArtist } from 'sprites/artist';
+import { CoinBehavior } from './behavior';
 import { COIN_CELLS_WIDTH } from './data';
-import { Behavior } from 'behavior/behavior';
 
 export class ConinSprite extends Sprite {
   value = 50;
 
-  constructor(data: SpriteData, coinCells: Cell[], behavior: Behavior) {
+  constructor(data: SpriteData, coinCells: Cell[], behavior: CoinBehavior) {
     super('coin', new SpriteArtist(SpriteSheetResource, coinCells), behavior);
 
     this.width = COIN_CELLS_WIDTH;
