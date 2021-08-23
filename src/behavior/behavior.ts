@@ -7,6 +7,8 @@ import { BehaviorAction } from './model';
 export class Behavior<T extends Sprite = Sprite> {
   actions: BehaviorAction<T>[] = [];
 
+  executeTime!: TimeStamp;
+
   lastAdvanceTime: TimeStamp = 0;
 
   timers: Timer[] = [];
@@ -24,21 +26,20 @@ export class Behavior<T extends Sprite = Sprite> {
   }
 
   execute(sprite: T, fps: Fps, context: CanvasRenderingContext2D): void {
+    this.updateExecuteTime(fps.currentTime);
     this.actions.forEach((action) => action.call(this, sprite, fps, context));
   }
 
   pause() {
     this.timers.forEach((timer) => {
       if (!timer.isPaused()) {
-        timer.pause();
+        timer.pause(this.executeTime);
       }
     });
   }
 
   resetTimer(timer: Timer) {
-    timer.stop();
-    timer.reset();
-    timer.start();
+    timer.reboot();
   }
 
   skipFirst() {
@@ -48,9 +49,15 @@ export class Behavior<T extends Sprite = Sprite> {
   unpause() {
     this.timers.forEach((timer) => {
       if (timer.isPaused()) {
-        timer.unpause();
+        timer.unpause(this.executeTime);
       }
     });
+  }
+
+  updateExecuteTime(time: TimeStamp) {
+    this.executeTime = time;
+
+    return this;
   }
 
   updateLastAdvanceTime(fps: Fps) {

@@ -41,6 +41,12 @@ export class Timer {
     this.paused = true;
   }
 
+  reboot() {
+    this.stop();
+    this.reset();
+    this.start();
+  }
+
   // 重置
   reset(now?: TimeStamp) {
     this.elapsed = 0;

@@ -13,11 +13,15 @@ export class Fps {
 
   lastFpsUpdateTime = 0;
 
-  calc(now: TimeStamp, tickCb?: (fps: number) => void): number {
+  calc(
+    now: TimeStamp,
+    rate: number = 1,
+    tickCb?: (fps: number) => void
+  ): number {
     // 帧速率表示为 帧/秒
     // 是一帧除以上一个动画帧和当前帧之间的时间间隔
     this.currentTime = now;
-    this.currentValue = (1 / (now - this.lastAnimationFrameTime)) * 1000;
+    this.currentValue = (1 / (now - this.lastAnimationFrameTime)) * 1000 * rate;
 
     if (now - this.lastFpsUpdateTime > 1000) {
       this.lastFpsUpdateTime = now;

@@ -24,6 +24,7 @@ import { SapphireSprite } from 'sprites/sapphire/sprite';
 import { SNAIL_SPRITES } from 'sprites/snail';
 import { SnailSprite } from 'sprites/snail/sprite';
 import { Sprite } from 'sprites/sprite';
+import { TimeSystem } from 'timeSystem';
 import { skipFn } from 'utils';
 
 export class Snailbait {
@@ -66,7 +67,9 @@ export class Snailbait {
     {
       name: '跳跃',
       keys: ['j', 'f', ' '],
-      command: () => this.runnerSprite.jump(),
+      command: () => {
+        this.runnerSprite.jump(this.timeSystem.calculateGameTime());
+      },
     },
   ];
 
@@ -104,6 +107,10 @@ export class Snailbait {
     ...this.snailSprites.map((snail) => snail.arms[0]),
     this.runnerSprite,
   ];
+
+  timeRate = 1.0;
+
+  timeSystem = new TimeSystem();
 
   toastEl!: HTMLDivElement;
 
@@ -216,6 +223,8 @@ export class Snailbait {
   }
 
   run(now: TimeStamp) {
+    now = this.timeSystem.calculateGameTime();
+
     if (this.paused) {
       // TODO
       // ？？ 这里为啥要检测是否恢复啊很奇怪……明明能知道确切的游戏暂停/启动时间点
@@ -224,23 +233,29 @@ export class Snailbait {
       //   this.pausedCheckInterval
       // );
     } else {
-      this.fps.calc(now, (value) => this.updateFps(value));
+      this.fps.calc(now, this.timeRate, (value) => this.updateFps(value));
       this.draw();
       this.fps.update(now);
       requestAnimationFrame(this.run);
     }
   }
 
+  setTimeRate(rate: number) {
+    this.timeRate = rate;
+    this.timeSystem.setTransducer((now: number) => now * this.timeRate);
+  }
+
   startGame() {
+    this.timeSystem.start();
     requestAnimationFrame(this.run);
   }
 
   togglePaused() {
-    const now = +new Date();
+    const now = this.timeSystem.calculateGameTime();
 
     this.paused = !this.paused;
 
-    this.togglePausedStateOfAllBehaviors();
+    this.togglePausedStateOfAllBehaviors(now);
 
     if (this.paused) {
       this.pauseStartTime = now;
@@ -250,14 +265,17 @@ export class Snailbait {
     }
   }
 
-  togglePausedStateOfAllBehaviors() {
-    this.sprites.forEach((sprite) => {
-      if (this.paused) {
-        sprite.behavior?.pause();
-      } else {
-        sprite.behavior?.unpause();
-      }
-    });
+  togglePausedStateOfAllBehaviors(now: TimeStamp) {
+    this.sprites
+      .filter((spirte) => spirte.behavior)
+      .map((sprite) => sprite.behavior!.updateExecuteTime(now))
+      .forEach((behavior) => {
+        if (this.paused) {
+          behavior!.pause();
+        } else {
+          behavior!.unpause();
+        }
+      });
   }
 
   turnLeft() {

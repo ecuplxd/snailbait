@@ -2,7 +2,7 @@ import { Behavior } from 'behavior/behavior';
 import { Fps } from 'fps';
 import { TimeStamp } from 'model';
 import { AnimationTimer } from 'timer/animationTimer';
-import { EaseOut, EaseIn } from 'timer/easing';
+import { EaseIn, EaseOut } from 'timer/easing';
 import { JUMP_DURATION, RUN_ANIMATION_RATE } from './data';
 import { RunnerSprite } from './sprite';
 
@@ -18,7 +18,7 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
   lastAdvanceTime: TimeStamp = 0;
 
   ascend(sprite: RunnerSprite) {
-    const elapsed = this.ascendTimer.getElapsedTime();
+    const elapsed = this.ascendTimer.getElapsedTime(this.executeTime);
     const deltaY = sprite.jumpHeight * (elapsed / (sprite.jumpDuration / 2));
 
     sprite.top = sprite.verticalLaunchPosition - deltaY;
@@ -27,7 +27,7 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
   collide(sprite: RunnerSprite, fps: Fps, context: CanvasRenderingContext2D) {}
 
   descend(sprite: RunnerSprite) {
-    const elapsed = this.descendTimer.getElapsedTime();
+    const elapsed = this.descendTimer.getElapsedTime(this.executeTime);
     const deltaY = sprite.jumpHeight * (elapsed / (sprite.jumpDuration / 2));
 
     sprite.top = sprite.jumpApex + deltaY;
@@ -39,8 +39,8 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
 
   finishAscend(sprite: RunnerSprite) {
     sprite.jumpApex = sprite.top;
-    this.ascendTimer.stop();
-    this.descendTimer.start();
+    this.ascendTimer.stop(this.executeTime);
+    this.descendTimer.start(this.executeTime);
   }
 
   finishDescend(sprite: RunnerSprite) {
@@ -58,11 +58,17 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
   }
 
   isDoneAscending(sprite: RunnerSprite) {
-    return this.ascendTimer.getElapsedTime() > sprite.jumpDuration / 2;
+    return (
+      this.ascendTimer.getElapsedTime(this.executeTime) >
+      sprite.jumpDuration / 2
+    );
   }
 
   isDoneDescending(sprite: RunnerSprite) {
-    return this.descendTimer.getElapsedTime() > sprite.jumpDuration / 2;
+    return (
+      this.descendTimer.getElapsedTime(this.executeTime) >
+      sprite.jumpDuration / 2
+    );
   }
 
   jump(sprite: RunnerSprite, fps: Fps, context: CanvasRenderingContext2D) {
@@ -87,9 +93,9 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
 
   pause() {
     if (this.ascendTimer.isRunning()) {
-      this.ascendTimer.pause();
+      this.ascendTimer.pause(this.executeTime);
     } else if (this.descendTimer.isRunning()) {
-      this.descendTimer.pause();
+      this.descendTimer.pause(this.executeTime);
     }
   }
 
@@ -110,9 +116,9 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
 
   unpause() {
     if (this.ascendTimer.isRunning()) {
-      this.ascendTimer.unpause();
+      this.ascendTimer.unpause(this.executeTime);
     } else if (this.descendTimer.isRunning()) {
-      this.descendTimer.unpause();
+      this.descendTimer.unpause(this.executeTime);
     }
   }
 }

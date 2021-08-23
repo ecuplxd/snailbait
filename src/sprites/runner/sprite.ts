@@ -1,5 +1,6 @@
 import { Behavior } from 'behavior/behavior';
 import { LEFT, RIGHT } from 'config';
+import { TimeStamp } from 'model';
 import { SpriteArtist } from 'sprites/artist';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
@@ -51,7 +52,7 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
     return this.track !== 3 && this.jumping;
   }
 
-  jump() {
+  jump(now: TimeStamp) {
     if (this.jumping) {
       return;
     }
@@ -59,7 +60,7 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
     this.jumping = true;
     this.animationRate = 0;
     this.verticalLaunchPosition = this.top;
-    (this.behavior as unknown as RunnerBehavior).ascendTimer.start();
+    (this.behavior as unknown as RunnerBehavior).ascendTimer.start(now);
   }
 
   stopJumping() {

@@ -3,7 +3,7 @@ import { Easing } from './easing';
 import { Timer } from './timer';
 
 export class AnimationTimer extends Timer {
-  constructor(public duration: number = 1000, public easing: Easing) {
+  constructor(public duration: number = 1000, public easing?: Easing) {
     super();
   }
 
