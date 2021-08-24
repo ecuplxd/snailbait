@@ -29,6 +29,19 @@ export class SnailSprite extends Sprite {
     this.arm(bomb);
   }
 
+  disCollideWidthOtherSprite(
+    sprite: Sprite,
+    context: CanvasRenderingContext2D
+  ) {
+    const r = this.calculateCollisionRectangle();
+    const o = sprite.calculateCollisionRectangle();
+
+    context.beginPath();
+    context.rect(r.left, r.top, r.right - r.left, r.bottom - r.top);
+
+    return context.isPointInPath(o.centerX, o.centerY);
+  }
+
   putOnPlatform() {
     this.top = this.platformSprite.top - this.height;
     this.left = this.platformSprite.left;

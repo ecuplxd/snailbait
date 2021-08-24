@@ -4,6 +4,8 @@ export const RUNNER_CELLS_HEIGHT = 54;
 
 export const RUNNER_HEIGHT = 55;
 
+export const RUNNER_WIDTH = 80;
+
 export const RUN_ANIMATION_RATE = 30;
 
 export const RUNNER_LEFT = 50;

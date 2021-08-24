@@ -11,6 +11,8 @@ export class Behavior<T extends Sprite = Sprite> {
 
   lastAdvanceTime: TimeStamp = 0;
 
+  relateSprites: WeakMap<Behavior, Sprite[]> = new WeakMap();
+
   timers: Timer[] = [];
 
   advanceArtist(sprite: T, fps: Fps) {
@@ -30,6 +32,10 @@ export class Behavior<T extends Sprite = Sprite> {
     this.actions.forEach((action) => action.call(this, sprite, fps, context));
   }
 
+  getRelateSprites(): Sprite[] {
+    return this.relateSprites.get(this as any) || [];
+  }
+
   pause() {
     this.timers.forEach((timer) => {
       if (!timer.isPaused()) {
@@ -40,6 +46,10 @@ export class Behavior<T extends Sprite = Sprite> {
 
   resetTimer(timer: Timer) {
     timer.reboot();
+  }
+
+  setRelateSprites(sprites: Sprite[]) {
+    this.relateSprites.set(this as any, sprites);
   }
 
   skipFirst() {

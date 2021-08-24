@@ -2,6 +2,8 @@ import { Behavior } from 'behavior/behavior';
 import { LEFT, RIGHT } from 'config';
 import { TimeStamp } from 'model';
 import { SpriteArtist } from 'sprites/artist';
+import { CollisionMargin } from 'sprites/collisionMargin';
+import { PlatformSprite } from 'sprites/platform/sprite';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
 import { calculatePlatformTop } from 'utils';
@@ -13,6 +15,7 @@ import {
   RUNNER_CELLS_RIGHT,
   RUNNER_HEIGHT,
   RUNNER_LEFT,
+  RUNNER_WIDTH,
   RUN_ANIMATION_RATE,
   STARTING_RUNNER_TRACK,
 } from './data';
@@ -20,7 +23,11 @@ import {
 export class RunnerSprite extends Sprite<SpriteArtist> {
   animationRate = RUN_ANIMATION_RATE;
 
+  collisionMargin = new CollisionMargin(20, 15, 15, 20);
+
   direction = LEFT;
+
+  height = RUNNER_HEIGHT;
 
   // 能跳到的最高高度，到达后将下降
   jumpApex = 0;
@@ -36,6 +43,8 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
 
   // 跳跃后到达的位置
   verticalLaunchPosition = 0;
+
+  width = RUNNER_WIDTH;
 
   constructor() {
     super(
@@ -61,6 +70,16 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
     this.animationRate = 0;
     this.verticalLaunchPosition = this.top;
     (this.behavior as unknown as RunnerBehavior).ascendTimer.start(now);
+  }
+
+  putOnTrack(platformSprite: PlatformSprite) {
+    const SPACE_BETWEEN_SPRITE_AND_TRACK = 2;
+
+    this.track = platformSprite.track;
+    this.top =
+      calculatePlatformTop(this.track) -
+      this.height -
+      SPACE_BETWEEN_SPRITE_AND_TRACK;
   }
 
   stopJumping() {

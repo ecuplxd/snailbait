@@ -121,6 +121,7 @@ export class Snailbait {
     this.scoreEl = this.getGameElement('score');
     this.loadingEl = this.getGameElement('loading');
 
+    this.runnerSprite.behavior?.setRelateSprites(this.sprites);
     this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.run = this.run.bind(this);
     this.updateScore(0);
