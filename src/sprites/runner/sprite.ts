@@ -27,7 +27,11 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
 
   direction = LEFT;
 
+  falling = false;
+
   height = RUNNER_HEIGHT;
+
+  initialVelocityY = 0;
 
   // 能跳到的最高高度，到达后将下降
   jumpApex = 0;
@@ -40,6 +44,8 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
   jumping = false;
 
   track = STARTING_RUNNER_TRACK;
+
+  velocityY = 0;
 
   // 跳跃后到达的位置
   verticalLaunchPosition = 0;
@@ -58,33 +64,92 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
   }
 
   canJump() {
-    return this.track !== 3 && this.jumping;
+    return this.jumping;
+  }
+
+  fall(now: TimeStamp, initialVelocity: number = 0) {
+    const behavior = this.getBehavior();
+
+    this.falling = true;
+    this.velocityY = initialVelocity;
+    this.initialVelocityY = initialVelocity;
+
+    behavior.fallTimer.start(now);
+  }
+
+  getBehavior() {
+    return this.behavior as unknown as RunnerBehavior;
   }
 
   jump(now: TimeStamp) {
-    if (this.jumping) {
+    if (this.canJump()) {
       return;
     }
+
+    const behavior = this.getBehavior();
 
     this.jumping = true;
     this.animationRate = 0;
     this.verticalLaunchPosition = this.top;
-    (this.behavior as unknown as RunnerBehavior).ascendTimer.start(now);
+
+    behavior.ascendTimer.start(now);
   }
 
-  putOnTrack(platformSprite: PlatformSprite) {
+  loseLife() {
+    this.hide();
+  }
+
+  platformUnderneath(track?: number) {
+    track = track || this.track;
+
+    const behavior = this.getBehavior();
+    const sr = this.calculateCollisionRectangle();
+    const platforms = behavior
+      .getRelateSprites()
+      .filter((sprite) => sprite.type === 'platform');
+
+    // tslint:disable-next-line: prefer-for-of
+    for (let i = 0; i < platforms.length; i++) {
+      const platform = platforms[i] as PlatformSprite;
+      const pr = platform.calculateCollisionRectangle();
+
+      if (track === platform.track) {
+        if (sr.right > pr.left && sr.left < pr.right) {
+          return platform;
+        }
+      }
+    }
+
+    return;
+  }
+
+  putOnTrack(track: number) {
     const SPACE_BETWEEN_SPRITE_AND_TRACK = 2;
 
-    this.track = platformSprite.track;
+    this.track = track;
     this.top =
       calculatePlatformTop(this.track) -
       this.height -
       SPACE_BETWEEN_SPRITE_AND_TRACK;
   }
 
+  stopFalling() {
+    const behavior = this.getBehavior();
+
+    this.falling = false;
+    this.velocityY = 0;
+
+    behavior.fallTimer.stop(behavior.executeTime);
+  }
+
   stopJumping() {
+    const behavior = this.getBehavior();
+
+    behavior.ascendTimer.stop(behavior.executeTime);
+    behavior.descendTimer.stop(behavior.executeTime);
+
+    this.animationRate = RUN_ANIMATION_RATE;
     this.jumping = false;
-    (this.behavior as unknown as RunnerBehavior).descendTimer.stop();
   }
 
   turnLeft() {

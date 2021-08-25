@@ -3,3 +3,11 @@ export const STARTING_SPRITE_OFFSET = 0;
 export const STARTING_SPRITE_VELOCITY = 0;
 
 export const CANVAS_WIDTH = 800;
+
+export const CANVAS_HEIGHT = 600;
+
+export const GRAVITY_FORCE = 9.18;
+
+export const CANVAS_WIDTH_IN_METERS = 13;
+
+export const PIXELS_PER_METER = CANVAS_WIDTH / CANVAS_WIDTH_IN_METERS;
