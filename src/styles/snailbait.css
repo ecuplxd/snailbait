@@ -54,6 +54,7 @@ body {
 
 .snailbait-game-container canvas {
   border: 1px solid;
+  transition: opacity 5s;
 }
 
 #snailbait-game-info {

@@ -18,6 +18,7 @@ import { PLATFORM_VELOCITY_MULTIPLIER } from 'sprites/platform/data';
 import { PlatformSprite } from 'sprites/platform/sprite';
 import { RUBY_SPRITES } from 'sprites/ruby';
 import { RubySprite } from 'sprites/ruby/sprite';
+import { RUNNER_EXPLOSION_DURATION } from 'sprites/runner/data';
 import { RunnerSprite } from 'sprites/runner/sprite';
 import { SAPPHIRE_SPRITES } from 'sprites/sapphire';
 import { SapphireSprite } from 'sprites/sapphire/sprite';
@@ -73,6 +74,8 @@ export class Snailbait {
     },
   ];
 
+  lives = 3;
+
   loadingEl!: HTMLDivElement;
 
   paused = false;
@@ -82,6 +85,8 @@ export class Snailbait {
   pauseStartTime: TimeStamp = 0;
 
   platformSprites: PlatformSprite[] = PLATFORM_SPRITES;
+
+  playing = true;
 
   rubySprites: RubySprite[] = RUBY_SPRITES;
 
@@ -148,11 +153,34 @@ export class Snailbait {
       });
   }
 
+  endLifeTransition() {
+    const TIME_REST_DELAY = 1000;
+    const RUN_DELAY = 500;
+
+    this.canvas.style.display = '1.0';
+
+    if (this.lives === 0) {
+      this.gameOver();
+    } else {
+      this.restartLevel();
+    }
+
+    setTimeout(() => {
+      this.setTimeRate(1.0);
+
+      setTimeout(() => {
+        this.runnerSprite.animationRate = 0;
+      }, RUN_DELAY);
+    }, TIME_REST_DELAY);
+  }
+
   findKeyBinding(key: string): KeyBinding | undefined {
     return this.keyBindings.find(
       (binding) => ([] as string[]).concat(binding.keys).indexOf(key) !== -1
     );
   }
+
+  gameOver() {}
 
   getGameElement<T extends HTMLElement = HTMLDivElement>(id: string): T {
     return document.getElementById('snailbait-' + id) as T;
@@ -174,6 +202,10 @@ export class Snailbait {
 
   listenKeyboard() {
     window.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (!this.playing || this.runnerSprite.exploding) {
+        return;
+      }
+
       const keyBinding = this.findKeyBinding(event.key);
 
       if (keyBinding) {
@@ -187,6 +219,28 @@ export class Snailbait {
     window.addEventListener('blur', () => this.leaveGame());
 
     window.addEventListener('focus', () => this.reEnterGame());
+  }
+
+  loseLife() {
+    let transitionDuration = 3000;
+
+    this.lives--;
+
+    if (this.runnerSprite.exploding) {
+      this.startLifeTransition(RUNNER_EXPLOSION_DURATION);
+
+      transitionDuration += RUNNER_EXPLOSION_DURATION;
+    } else {
+      this.startLifeTransition();
+    }
+
+    setTimeout(() => this.endLifeTransition(), transitionDuration);
+  }
+
+  makeAllSpritesVisible() {
+    this.sprites.forEach((sprite) => {
+      sprite.visible = true;
+    });
   }
 
   moveSprites() {
@@ -215,6 +269,18 @@ export class Snailbait {
           }
         );
     }
+  }
+
+  resetOffsets() {
+    this.backgroundSprite.reset();
+    this.platformSprites.forEach((platform) => platform.reset());
+  }
+
+  restartLevel() {
+    this.resetOffsets();
+    this.runnerSprite.reset();
+    this.makeAllSpritesVisible();
+    this.playing = true;
   }
 
   revealToast(text: string) {
@@ -249,6 +315,19 @@ export class Snailbait {
   startGame() {
     this.timeSystem.start();
     requestAnimationFrame(this.run);
+  }
+
+  startLifeTransition(delay: number = 0) {
+    const CANVAS_TRANSITION_OPACITY = '0.05';
+    const SLOW_MOTION_RATE = 0.1;
+
+    this.canvas.style.opacity = CANVAS_TRANSITION_OPACITY;
+    this.playing = false;
+
+    setTimeout(() => {
+      this.setTimeRate(SLOW_MOTION_RATE);
+      this.runnerSprite.hide();
+    }, delay);
   }
 
   togglePaused() {

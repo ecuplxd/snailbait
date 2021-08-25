@@ -67,6 +67,16 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
     return this.jumping;
   }
 
+  explode() {
+    if (!this.exploding) {
+      if (this.animationRate === 0) {
+        this.animationRate = RUN_ANIMATION_RATE;
+      }
+
+      this.exploding = true;
+    }
+  }
+
   fall(now: TimeStamp, initialVelocity: number = 0) {
     const behavior = this.getBehavior();
 
@@ -96,7 +106,7 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
   }
 
   loseLife() {
-    this.hide();
+    // this.hide();
   }
 
   platformUnderneath(track?: number) {
@@ -131,6 +141,18 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
       calculatePlatformTop(this.track) -
       this.height -
       SPACE_BETWEEN_SPRITE_AND_TRACK;
+  }
+
+  reset() {
+    this.left = RUNNER_LEFT;
+    this.track = 1;
+    this.hOffset = 0;
+    this.visible = true;
+    this.exploding = false;
+    this.jumping = false;
+    this.falling = false;
+    this.top = calculatePlatformTop(3) - this.height;
+    this.artist.reset(RUNNER_CELLS_RIGHT);
   }
 
   stopFalling() {

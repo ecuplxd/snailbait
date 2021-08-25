@@ -1,6 +1,9 @@
 import { Behavior } from 'behavior/behavior';
+import { CellSwitchBehavior } from 'behavior/cellSwitch';
 import { Fps } from 'fps';
 import { TimeStamp } from 'model';
+import { BackgroundSprite } from 'sprites/background/sprite';
+import { ButtonSprite } from 'sprites/button/sprite';
 import { CANVAS_HEIGHT, GRAVITY_FORCE, PIXELS_PER_METER } from 'sprites/data';
 import { PlatformSprite } from 'sprites/platform/sprite';
 import { SnailSprite } from 'sprites/snail/sprite';
@@ -8,11 +11,15 @@ import { Sprite } from 'sprites/sprite';
 import { AnimationTimer } from 'timer/animationTimer';
 import { EaseIn, EaseOut } from 'timer/easing';
 import { calculatePlatformTop } from 'utils';
-import { JUMP_DURATION } from './data';
+import {
+  EXPLOSION_CELLS,
+  JUMP_DURATION,
+  RUNNER_EXPLOSION_DURATION,
+} from './data';
 import { RunnerSprite } from './sprite';
 
 export class RunnerBehavior extends Behavior<RunnerSprite> {
-  actions = [this.run, this.jump, this.collide, this.explode, this.fall];
+  actions = [this.run, this.jump, this.collide, this.fall];
 
   // 上升秒表
   ascendTimer = new AnimationTimer(JUMP_DURATION / 2, new EaseOut());
@@ -23,6 +30,19 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
   fallTimer = new AnimationTimer();
 
   lastAdvanceTime: TimeStamp = 0;
+
+  constructor() {
+    super();
+
+    const cellSwitch = new CellSwitchBehavior(
+      EXPLOSION_CELLS,
+      RUNNER_EXPLOSION_DURATION,
+      this.explodeTrigger,
+      this.explodeCallback
+    );
+
+    this.actions.push(this.combineBehavior(cellSwitch, cellSwitch.switch));
+  }
 
   ascend(sprite: RunnerSprite) {
     const elapsed = this.ascendTimer.getElapsedTime(this.executeTime);
@@ -64,7 +84,13 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
       : sprite.disCollideWidthOtherSprite(otherSprite, context);
   }
 
-  explode(sprite: RunnerSprite, fps: Fps, context: CanvasRenderingContext2D) {}
+  explodeCallback(sprite: Sprite, behavior: CellSwitchBehavior) {
+    sprite.exploding = false;
+  }
+
+  explodeTrigger(sprite: Sprite, fps: Fps) {
+    return sprite.exploding;
+  }
 
   fall(sprite: RunnerSprite, fps: Fps, context: CanvasRenderingContext2D) {
     if (sprite.falling) {
@@ -208,7 +234,17 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
     fps: Fps,
     context: CanvasRenderingContext2D
   ) {
-    this.explode(sprite, fps, context);
+    sprite.explode();
+
+    const backgroundSprite = this.getRelateSprites().find(
+      (item) => item.type === 'background'
+    ) as BackgroundSprite;
+
+    if (backgroundSprite) {
+      backgroundSprite.shake();
+    }
+
+    sprite.loseLife();
   }
 
   processCollision(
@@ -231,6 +267,10 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
       type === 'snail'
     ) {
       this.processAssetCollision(otherSprite);
+    } else if (type === 'button') {
+      if ((sprite.jumping && this.descendTimer.isRunning()) || sprite.falling) {
+        (otherSprite as ButtonSprite).detonating = true;
+      }
     }
 
     if (type === 'bat' || type === 'bee' || type === 'snail bomb') {

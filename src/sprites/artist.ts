@@ -35,4 +35,9 @@ export class SpriteArtist extends Artist {
       cell.height
     );
   }
+
+  reset(cells: Cell[]) {
+    this.cellIndex = 0;
+    this.cells = cells;
+  }
 }

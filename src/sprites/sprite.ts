@@ -1,4 +1,5 @@
 import { Fps } from 'fps';
+import { TimeStamp } from 'model';
 import { Behavior } from '../behavior/behavior';
 import { BombSprite } from './bomb/sprite';
 import { CollisionInfo, CollisionMargin } from './collisionMargin';
@@ -8,6 +9,7 @@ import {
   STARTING_SPRITE_VELOCITY,
 } from './data';
 import { Artist, SpriteData } from './model';
+import { RUN_ANIMATION_RATE } from './runner/data';
 
 export class Sprite<T extends Artist = Artist> {
   static DEFAULT_HEIGHT = 10;
@@ -15,6 +17,8 @@ export class Sprite<T extends Artist = Artist> {
   static DEFAULT_OPACITY = 1.0;
 
   static DEFAULT_WIDTH = 10;
+
+  animationRate = RUN_ANIMATION_RATE;
 
   arms: BombSprite[] = [];
 
@@ -33,6 +37,8 @@ export class Sprite<T extends Artist = Artist> {
   opacity = Sprite.DEFAULT_OPACITY;
 
   showCollisionRectangle = false;
+
+  switchStartTime: TimeStamp = 0;
 
   top = 0;
 
@@ -102,7 +108,15 @@ export class Sprite<T extends Artist = Artist> {
     context.restore();
   }
 
-  explode() {}
+  explode() {
+    if (!this.exploding) {
+      if (this.animationRate === 0) {
+        this.animationRate = RUN_ANIMATION_RATE;
+      }
+
+      this.exploding = true;
+    }
+  }
 
   hide() {
     this.visible = false;
@@ -121,6 +135,11 @@ export class Sprite<T extends Artist = Artist> {
 
   move(fps: Fps, velocity: number) {
     this.hOffset += fps.calCurrentFramePixelsToMove(velocity);
+  }
+
+  reset() {
+    this.velocityX = 0;
+    this.resetOffset();
   }
 
   resetOffset() {

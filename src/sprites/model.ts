@@ -22,7 +22,24 @@ export abstract class Artist {
 
   cells: Cell[] = [];
 
+  originalCells: Cell[] = [];
+
+  originalIndex!: number;
+
   advance() {}
 
+  backup(cells: Cell[]) {
+    this.originalCells = this.cells;
+    this.originalIndex = this.cellIndex;
+
+    this.cells = cells;
+    this.cellIndex = 0;
+  }
+
   abstract draw(sprite: Sprite, context: CanvasRenderingContext2D): void;
+
+  revert() {
+    this.cells = this.originalCells;
+    this.cellIndex = this.originalIndex;
+  }
 }

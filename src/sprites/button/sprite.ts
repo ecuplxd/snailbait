@@ -1,9 +1,9 @@
-import { PaceBehavior } from 'behavior/pace';
 import { SpriteArtist } from 'sprites/artist';
 import { Cell } from 'sprites/model';
 import { PlatformSprite } from 'sprites/platform/sprite';
 import { Sprite } from 'sprites/sprite';
 import { SpriteSheetResource } from 'sprites/spriteSheet';
+import { ButtonBehavior } from './behavior';
 import {
   BUTTON_CELLS_HEIGHT,
   BUTTON_CELLS_WIDTH,
@@ -11,13 +11,15 @@ import {
 } from './data';
 
 export class ButtonSprite extends Sprite<SpriteArtist> {
+  detonating = false;
+
   direction!: number;
 
   constructor(public platformSprite: PlatformSprite, buttonCells: Cell[]) {
     super(
       'button',
       new SpriteArtist(SpriteSheetResource, buttonCells),
-      new PaceBehavior()
+      new ButtonBehavior()
     );
 
     this.width = BUTTON_CELLS_WIDTH;

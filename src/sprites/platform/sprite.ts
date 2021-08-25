@@ -32,4 +32,8 @@ export class PlatformSprite extends Sprite<PlatformArtist> {
 
     this.top = calculatePlatformTop(data.track);
   }
+
+  reset() {
+    this.hOffset = 0;
+  }
 }

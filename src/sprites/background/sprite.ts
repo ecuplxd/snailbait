@@ -28,6 +28,27 @@ export class BackgroundSprite extends Sprite {
     }
   }
 
+  shake() {
+    const NUM_SHAKES = 12;
+    const SHAKE_INTERVAL = 80;
+    const velocity = BACKGROUND_VELOCITY * 1.5;
+    const originalVelocity = this.velocityX;
+
+    let i = 0;
+
+    const reversDirection = () => {
+      this.velocityX = i % 2 ? velocity : -velocity;
+      if (i < NUM_SHAKES) {
+        setTimeout(reversDirection, SHAKE_INTERVAL);
+        ++i;
+      } else {
+        this.velocityX = originalVelocity;
+      }
+    };
+
+    reversDirection();
+  }
+
   turnLeft() {
     this.updateVelocityX(-BACKGROUND_VELOCITY);
   }
