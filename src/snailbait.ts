@@ -1,7 +1,7 @@
 import { fakeIn, fakeOut } from 'animation';
 import { PAUSED_CHECK_INTERVAL } from 'config';
 import { Fps } from 'fps';
-import { KeyBinding, TimeStamp } from 'model';
+import { AudioChannel, KeyBinding, Sound, SoundType, TimeStamp } from 'model';
 import { Subscription, timer } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { BackgroundSprite } from 'sprites/background/sprite';
@@ -25,10 +25,15 @@ import { SapphireSprite } from 'sprites/sapphire/sprite';
 import { SNAIL_SPRITES } from 'sprites/snail';
 import { SnailSprite } from 'sprites/snail/sprite';
 import { Sprite } from 'sprites/sprite';
+import { SpriteSheetResource } from 'sprites/spriteSheet';
 import { TimeSystem } from 'timeSystem';
 import { skipFn } from 'utils';
 
 export class Snailbait {
+  audioChannels: AudioChannel[] = [];
+
+  audioSpriteCountdown = 3;
+
   backgroundSprite = new BackgroundSprite();
 
   batSprites: BatSprite[] = BAT_SPRITES;
@@ -48,6 +53,10 @@ export class Snailbait {
   fps = new Fps();
 
   fpsEl!: HTMLDivElement;
+
+  gameStarted = false;
+
+  graphicsReady = false;
 
   keyBindings: KeyBinding[] = [
     {
@@ -78,6 +87,12 @@ export class Snailbait {
 
   loadingEl!: HTMLDivElement;
 
+  musicCheckboxEl!: HTMLInputElement;
+
+  musicEl!: HTMLAudioElement;
+
+  musicOn!: boolean;
+
   paused = false;
 
   pausedCheckInterval = PAUSED_CHECK_INTERVAL;
@@ -99,6 +114,23 @@ export class Snailbait {
   scoreEl!: HTMLDivElement;
 
   snailSprites: SnailSprite[] = SNAIL_SPRITES;
+
+  soundCheckboxEl!: HTMLInputElement;
+
+  soundOn!: boolean;
+
+  sounds: {
+    [key in SoundType]: Sound;
+  } = {
+    cannonSound: new Sound(7.7, 1031),
+    coinSound: new Sound(7.1, 588),
+    electricityFlowingSound: new Sound(1.03, 1753),
+    explosionSound: new Sound(4.3, 760),
+    pianoSound: new Sound(5.6, 395),
+    thudSound: new Sound(3.1, 809),
+  };
+
+  soundSpritesEl!: HTMLAudioElement;
 
   sprites: Sprite[] = [
     ...this.platformSprites,
@@ -125,12 +157,47 @@ export class Snailbait {
     this.fpsEl = this.getGameElement('fps');
     this.scoreEl = this.getGameElement('score');
     this.loadingEl = this.getGameElement('loading');
+    this.musicEl = this.getGameElement('music');
+    this.musicCheckboxEl = this.getGameElement('music-checkbox');
+    this.musicOn = this.musicCheckboxEl.checked;
+    this.musicEl.volume = 0.01;
+    this.soundSpritesEl = this.getGameElement('audio-sprites');
+    this.soundCheckboxEl = this.getGameElement('sound-checkbox');
+    this.soundOn = this.soundCheckboxEl.checked;
+    this.audioChannels.push(new AudioChannel(this.soundSpritesEl));
 
-    this.runnerSprite.behavior?.setRelateSprites(this.sprites);
     this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     this.run = this.run.bind(this);
-    this.updateScore(0);
-    this.listenKeyboard();
+    this.sprites.forEach((sprite) => sprite.bindHost(this));
+    this.runnerSprite.behavior?.setRelateSprites(this.sprites);
+  }
+
+  createAudioChannels() {
+    this.audioChannels.forEach((channel, index) => {
+      if (index !== 0) {
+        const audio = document.createElement('audio');
+
+        audio.src = this.soundSpritesEl.currentSrc;
+        audio.setAttribute('autobuffer', 'true');
+        audio.addEventListener('loadeddata', () => this.soundLoaded(), false);
+
+        channel.audio = audio;
+      }
+    });
+
+    this.audioChannels.push(
+      ...Array(this.audioSpriteCountdown)
+        .fill(0)
+        .map(() => {
+          const audio = document.createElement('audio');
+
+          audio.src = this.soundSpritesEl.currentSrc;
+          audio.setAttribute('autobuffer', 'true');
+          audio.addEventListener('loadeddata', () => this.soundLoaded(), false);
+
+          return new AudioChannel(audio);
+        })
+    );
   }
 
   draw() {
@@ -182,12 +249,34 @@ export class Snailbait {
 
   gameOver() {}
 
+  getFirstAvailableAudioChannel(): AudioChannel | undefined {
+    return this.audioChannels.find((channel) => !channel.playing);
+  }
+
   getGameElement<T extends HTMLElement = HTMLDivElement>(id: string): T {
     return document.getElementById('snailbait-' + id) as T;
   }
 
   hideToast() {
     fakeOut(this.toastEl, 450);
+  }
+
+  init() {
+    this.updateScore(0);
+    this.initDomEvent();
+    this.listenKeyboard();
+    this.spriteSheetLoad();
+  }
+
+  initDomEvent() {
+    this.musicCheckboxEl.addEventListener('change', () => {
+      this.musicOn = this.musicCheckboxEl.checked;
+      this.toggleMusic(this.musicOn);
+    });
+
+    this.soundCheckboxEl.addEventListener('change', () => {
+      this.soundOn = this.soundCheckboxEl.checked;
+    });
   }
 
   leaveGame() {
@@ -253,6 +342,29 @@ export class Snailbait {
       .forEach((sprite) => sprite.move(this.fps, platformVelocity));
   }
 
+  playSound(soundType: SoundType) {
+    if (this.soundOn) {
+      const sound = this.sounds[soundType];
+      const chanel = this.getFirstAvailableAudioChannel();
+
+      if (!chanel) {
+        console.warn('All audio channels are busy. Cannot play sound');
+      } else {
+        const audio = chanel.audio;
+
+        audio.volume = sound.volume;
+
+        chanel.seek(sound);
+        chanel.play();
+
+        setTimeout(() => {
+          chanel.stopPlay();
+          chanel.seek(sound);
+        }, sound.duration);
+      }
+    }
+  }
+
   reEnterGame() {
     if (this.paused) {
       this.countdown_ = timer(0, 1000)
@@ -312,8 +424,26 @@ export class Snailbait {
     this.timeSystem.setTransducer((now: number) => now * this.timeRate);
   }
 
+  soundLoaded() {
+    this.audioSpriteCountdown--;
+
+    if (this.audioSpriteCountdown === 0) {
+      if (!this.gameStarted && this.graphicsReady) {
+        this.startGame();
+      }
+    }
+  }
+
+  spriteSheetLoad() {
+    SpriteSheetResource.onload = () => {
+      this.graphicsReady = true;
+      this.createAudioChannels();
+    };
+  }
+
   startGame() {
     this.timeSystem.start();
+    this.startMusic();
     requestAnimationFrame(this.run);
   }
 
@@ -330,6 +460,28 @@ export class Snailbait {
     }, delay);
   }
 
+  startMusic() {
+    if (this.musicOn) {
+      // 处理无法自动播放
+      // play() failed because the user didn't interact with the document first.
+      const play = this.musicEl.play();
+
+      if (play) {
+        play.then(skipFn).catch(() => {
+          this.musicEl.play();
+        });
+      }
+    }
+  }
+
+  toggleMusic(play: boolean) {
+    if (play) {
+      this.musicEl.play();
+    } else {
+      this.musicEl.pause();
+    }
+  }
+
   togglePaused() {
     const now = this.timeSystem.calculateGameTime();
 
@@ -342,6 +494,10 @@ export class Snailbait {
     } else {
       this.fps.increaseUpdate(now - this.pauseStartTime);
       this.startGame();
+    }
+
+    if (this.musicOn) {
+      this.toggleMusic(!this.paused);
     }
   }
 

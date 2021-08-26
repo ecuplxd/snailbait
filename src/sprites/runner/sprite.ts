@@ -74,6 +74,7 @@ export class RunnerSprite extends Sprite<SpriteArtist> {
       }
 
       this.exploding = true;
+      this.app.playSound('explosionSound');
     }
   }
 

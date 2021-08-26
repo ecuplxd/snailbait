@@ -100,6 +100,7 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
         sprite.stopFalling();
 
         if (outOfPlay) {
+          sprite.app.playSound('electricityFlowingSound');
           sprite.loseLife();
         }
       } else {
@@ -227,6 +228,12 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
 
   processAssetCollision(sprite: Sprite) {
     sprite.hide();
+
+    if (sprite.type === 'coin') {
+      sprite.app.playSound('coinSound');
+    } else {
+      sprite.app.playSound('pianoSound');
+    }
   }
 
   processBadGuyCollision(
@@ -289,6 +296,7 @@ export class RunnerBehavior extends Behavior<RunnerSprite> {
     if (isDescending) {
       sprite.putOnTrack(platformSprite.track);
     } else {
+      sprite.app.playSound('thudSound');
       sprite.fall(this.executeTime);
     }
   }

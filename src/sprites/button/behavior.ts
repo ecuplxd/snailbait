@@ -22,8 +22,6 @@ export class ButtonBehavior extends Behavior {
 
     const bees = this.getRelateSprites().filter((item) => item.type === 'bee');
 
-    console.log(bees);
-
     sprite.artist.cellIndex = 1;
     bees[5].explode();
 

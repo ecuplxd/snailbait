@@ -34,6 +34,8 @@ export class SnailBehavior extends Behavior {
     if (!bomb.visible && sprite.artist.cellIndex === MOUTH_OPEN_CELL) {
       bomb.left = sprite.left;
       bomb.visible = true;
+
+      sprite.app.playSound('cannonSound');
     }
   }
 }

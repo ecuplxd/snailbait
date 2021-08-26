@@ -1,5 +1,6 @@
 import { Fps } from 'fps';
 import { TimeStamp } from 'model';
+import { Snailbait } from 'snailbait';
 import { Behavior } from '../behavior/behavior';
 import { BombSprite } from './bomb/sprite';
 import { CollisionInfo, CollisionMargin } from './collisionMargin';
@@ -19,6 +20,8 @@ export class Sprite<T extends Artist = Artist> {
   static DEFAULT_WIDTH = 10;
 
   animationRate = RUN_ANIMATION_RATE;
+
+  app!: Snailbait;
 
   arms: BombSprite[] = [];
 
@@ -60,6 +63,10 @@ export class Sprite<T extends Artist = Artist> {
     arm.initArm(this);
 
     this.arms.push(arm);
+  }
+
+  bindHost(host: Snailbait) {
+    this.app = host;
   }
 
   calculateCollisionRectangle(): CollisionInfo {
@@ -115,6 +122,7 @@ export class Sprite<T extends Artist = Artist> {
       }
 
       this.exploding = true;
+      this.app.playSound('explosionSound');
     }
   }
 

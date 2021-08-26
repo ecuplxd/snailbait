@@ -32,12 +32,12 @@
       <div class="config-item">
         <div>
           <label for="sound">声音：</label>
-          <input type="checkbox" name="sound" id="sound">
+          <input type="checkbox" name="sound" id="snailbait-sound-checkbox">
         </div>
 
         <div>
           <label for="music">音乐：</label>
-          <input type="checkbox" name="music" id="music">
+          <input type="checkbox" name="music" id="snailbait-music-checkbox">
         </div>
       </div>
 
@@ -59,6 +59,18 @@
         <span>p：<span class="description">暂停</span></span>
       </div>
     </div>
+
+    <!-- 音乐 -->
+    <audio id="snailbait-music" preload="auto" loop="true">
+      <source src="sounds/music.ogg" type="audio/ogg">
+      <source src="sounds/music.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- 音效 -->
+    <audio id="snailbait-audio-sprites" preload="auto">
+      <source src="sounds/audio-sprites.ogg" type="audio/ogg">
+      <source src="sounds/audio-sprites.mp3" type="audio/mp3">
+    </audio>
   </div>
 
   <script src="./dist/snailbait.js"></script>
