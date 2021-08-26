@@ -163,6 +163,10 @@ export class Sprite<T extends Artist = Artist> {
     return this.visible && !this.exploding;
   }
 
+  show() {
+    this.visible = true;
+  }
+
   update(context: CanvasRenderingContext2D, fps: Fps) {
     if (this.behavior) {
       this.behavior.execute(this, fps, context);

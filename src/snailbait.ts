@@ -4,6 +4,8 @@ import { Fps } from 'fps';
 import { AudioChannel, KeyBinding, Sound, SoundType, TimeStamp } from 'model';
 import { Subscription, timer } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { SMOKING_HOLE_SPRITES } from 'sprites/smoke';
+import { SmokingHoleSprite } from 'sprites/smoke/smoke';
 import { BackgroundSprite } from 'sprites/background/sprite';
 import { BAT_SPRITES } from 'sprites/bat';
 import { BatSprite } from 'sprites/bat/sprite';
@@ -113,6 +115,8 @@ export class Snailbait {
 
   scoreEl!: HTMLDivElement;
 
+  smokingHoleSprites: SmokingHoleSprite[] = SMOKING_HOLE_SPRITES;
+
   snailSprites: SnailSprite[] = SNAIL_SPRITES;
 
   soundCheckboxEl!: HTMLInputElement;
@@ -133,6 +137,7 @@ export class Snailbait {
   soundSpritesEl!: HTMLAudioElement;
 
   sprites: Sprite[] = [
+    ...this.smokingHoleSprites,
     ...this.platformSprites,
     ...this.batSprites,
     ...this.beeSprites,
@@ -339,7 +344,14 @@ export class Snailbait {
     this.backgroundSprite.move(this.fps);
     this.sprites
       .filter((sprite) => sprite.type !== 'runner')
-      .forEach((sprite) => sprite.move(this.fps, platformVelocity));
+      .forEach((sprite) =>
+        sprite.move(
+          this.fps,
+          sprite.type === 'smoking hole'
+            ? this.backgroundSprite.hOffset
+            : platformVelocity
+        )
+      );
   }
 
   playSound(soundType: SoundType) {

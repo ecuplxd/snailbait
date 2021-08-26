@@ -23,6 +23,10 @@ export class SpriteArtist extends Artist {
   drawImge(context: CanvasRenderingContext2D, left: number, top: number) {
     const cell = this.cells[this.cellIndex];
 
+    if (!cell) {
+      return;
+    }
+
     context.drawImage(
       this.spritesheet,
       cell.left,
